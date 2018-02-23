@@ -10,4 +10,5 @@ func main() {
 	fmt.Println(temp)
 	fmt.Println(aSimplePackage.Pi)
 	aSimplePackage.Version()
+	fmt.Println(aSimplePackage.version)
 }

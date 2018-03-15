@@ -12,10 +12,25 @@ var minusP = flag.Bool("p", false, "Pipes")
 var minusSL = flag.Bool("sl", false, "Symbolic links")
 var minusD = flag.Bool("d", false, "Directories")
 var minusF = flag.Bool("f", false, "Files")
+var minusX = flag.String("x", "", "Exclude files")
 
 var printAll bool
 
+func excludeNames(name string, exclude string) bool {
+	if exclude == "" {
+		return false
+	}
+	if filepath.Base(name) == exclude {
+		return true
+	}
+	return false
+}
+
 func walkFunction(path string, info os.FileInfo, err error) error {
+
+	if excludeNames(path, *minusX) {
+		return nil
+	}
 
 	fileInfo, err := os.Stat(path)
 	if err != nil {

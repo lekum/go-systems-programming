@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 var minusS = flag.Bool("s", false, "Sockets")
@@ -13,8 +14,18 @@ var minusSL = flag.Bool("sl", false, "Symbolic links")
 var minusD = flag.Bool("d", false, "Directories")
 var minusF = flag.Bool("f", false, "Files")
 var minusX = flag.String("x", "", "Exclude files")
+var minusRE = flag.String("re", "", "Match with regex")
 
 var printAll bool
+
+func regularExpression(path, regExp string) bool {
+	if regExp == "" {
+		return true
+	}
+	r, _ := regexp.Compile(regExp)
+	matched := r.MatchString(path)
+	return matched
+}
 
 func excludeNames(name string, exclude string) bool {
 	if exclude == "" {
@@ -29,6 +40,10 @@ func excludeNames(name string, exclude string) bool {
 func walkFunction(path string, info os.FileInfo, err error) error {
 
 	if excludeNames(path, *minusX) {
+		return nil
+	}
+
+	if regularExpression(path, *minusRE) == false {
 		return nil
 	}
 

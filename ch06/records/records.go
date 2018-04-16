@@ -10,7 +10,7 @@ import (
 func main() {
 
 	if len(os.Args) != 2 {
-		fmt.Printf("Usage: %s <FILENAME>\n", filepath.Base(os.Args[1]))
+		fmt.Printf("Usage: %s <FILENAME>\n", filepath.Base(os.Args[0]))
 		os.Exit(1)
 	}
 
@@ -38,4 +38,23 @@ func main() {
 		}
 	}
 	writer.Flush()
+
+	f, err := os.Open(filename)
+	if err != nil {
+		fmt.Printf("Error opening file: %v\n", err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	reader := csv.NewReader(f)
+	reader.FieldsPerRecord = -1
+	allRecords, err := reader.ReadAll()
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		os.Exit(1)
+	}
+
+	for _, rec := range allRecords {
+		fmt.Printf("%s:%s:%s\n", rec[0], rec[1], rec[2])
+	}
 }
